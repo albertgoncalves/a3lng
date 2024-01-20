@@ -7,6 +7,8 @@ type expr =
   | ExprInt of int
   | ExprStr of string
   | ExprIdent of string
+  | ExprAddr of string
+  | ExprDeref of expr
   | ExprBinOp of (op * expr * expr)
   | ExprCall of expr * (expr list)
 
@@ -37,6 +39,8 @@ let rec show_expr n =
   | ExprInt n -> string_of_int n
   | ExprStr str -> Printf.sprintf "%S" str
   | ExprIdent ident -> ident
+  | ExprAddr ident -> Printf.sprintf "(& %s)" ident
+  | ExprDeref expr -> Printf.sprintf "(* %s)" (show_expr n expr)
   | ExprBinOp (op, l, r) ->
     Printf.sprintf "(%s %s %s)" (show_op op) (show_expr n l) (show_expr n r)
   | ExprCall (func, args) ->

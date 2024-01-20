@@ -31,6 +31,13 @@ and expr_to_atom =
   | ExprInt n -> AtomInt n
   | ExprStr str -> AtomStr str
   | ExprIdent ident -> AtomIdent ident
+  | ExprAddr ident -> AtomAddr ident
+  | ExprDeref expr ->
+    (
+      match expr_to_atom expr with
+      | AtomIdent ident -> AtomDeref ident
+      | _ -> assert false
+    )
   | ExprBinOp (op, l, r) ->
     (
       let ident = next_k () in

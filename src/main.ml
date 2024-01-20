@@ -18,8 +18,13 @@ let () =
        [],
        [
          StmtLet ("x", ExprInt 1);
-         StmtLet ("i", ExprInt 0);
-         StmtLet ("m", ExprInt 7);
+         StmtLet ("i", ExprInt 1);
+         StmtUpdate (ExprIdent "i", ExprInt 0);
+         StmtLet ("j", ExprIdent "i");
+         StmtUpdate
+           (ExprIdent "j", ExprBinOp (OpAdd, ExprIdent "j", ExprInt 1));
+         StmtLet ("a", ExprAddr "i");
+         StmtLet ("m", ExprBinOp (OpAdd, ExprIdent "j", ExprInt 6));
          StmtLet
            ("n",
             ExprBinOp
@@ -41,7 +46,8 @@ let () =
                   (OpGe, ExprIdent "x", ExprIdent "z"),
                 [StmtReturn (Some (ExprIdent "x"))]);
              StmtUpdate
-               (ExprIdent "i", ExprBinOp (OpAdd, ExprIdent "i", ExprInt 1));
+               (ExprIdent "i",
+                ExprBinOp (OpAdd, ExprDeref (ExprIdent "a"), ExprInt 1));
            ];
          StmtReturn (Some (ExprInt 0));
        ])

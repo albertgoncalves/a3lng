@@ -58,7 +58,8 @@ and walk_atom_op =
 and walk_atom =
   function
   | AtomInt _ | AtomStr _ -> ()
-  | AtomIdent ident -> global.reads <- StringSet.add ident global.reads
+  | AtomIdent ident | AtomAddr ident | AtomDeref ident ->
+    global.reads <- StringSet.add ident global.reads
 
 let remove_unused unused =
   function
@@ -76,10 +77,12 @@ let eval_op op l r =
 
 let add_const ident atoms =
   function
+  | Atom (AtomAddr _) | Atom (AtomDeref _) -> ()
   | Atom atom -> Hashtbl.add atoms ident atom
   | BinOp (op, AtomInt l, AtomInt r) ->
     (
       match eval_op op l r with
+      | Some (AtomAddr _) | Some (AtomDeref _) -> assert false
       | Some atom -> Hashtbl.add atoms ident atom
       | None -> ()
     )
@@ -93,7 +96,7 @@ let collect_const candidates atoms =
 
 let replace_consts_atom consts =
   function
-  | AtomInt _ | AtomStr _ as atom -> atom
+  | AtomInt _ | AtomStr _ | AtomAddr _ | AtomDeref _ as atom -> atom
   | AtomIdent ident as atom ->
     (
       match Hashtbl.find_opt consts ident with

@@ -2,6 +2,8 @@ type atom =
   | AtomInt of int
   | AtomStr of string
   | AtomIdent of string
+  | AtomAddr of string
+  | AtomDeref of string
 
 type atom_op =
   | Atom of atom
@@ -22,6 +24,8 @@ let show_atom =
   | AtomInt n -> string_of_int n
   | AtomStr str -> Printf.sprintf "%S" str
   | AtomIdent ident -> ident
+  | AtomAddr ident -> Printf.sprintf "&%s" ident
+  | AtomDeref ident -> Printf.sprintf "*%s" ident
 
 let show_atom_op =
   function
